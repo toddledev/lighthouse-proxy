@@ -21,6 +21,6 @@ jobs:
       - name: Install worker dependencies
         run: bun install --frozen-lockfile
       - name: Deploy
-        run: bun deploy
+        run: bun run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

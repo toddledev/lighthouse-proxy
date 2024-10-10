@@ -5,4 +5,4 @@ Upstash Redis is used for rate limiting.
 
 To install: `bun i`
 To run: `bun dev`
-To deploy: `bun deploy`
+To deploy: `bun run deploy`
