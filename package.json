@@ -6,6 +6,7 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "prettier": "prettier --check '*.{json,js}' '**/*.{js,ts}'",
+    "prettier:write": "prettier --write  '*.{json,js}' './**/*.{js,ts}'",
     "start": "wrangler dev",
     "typecheck": "tsc --noEmit"
   },
