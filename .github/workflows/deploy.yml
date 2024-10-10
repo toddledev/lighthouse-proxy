@@ -1,0 +1,26 @@
+name: 'Deploy'
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - '.prettier*'
+      - '.eslint*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+      - name: Install worker dependencies
+        run: bun install --frozen-lockfile
+      - name: Deploy
+        run: bun deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
