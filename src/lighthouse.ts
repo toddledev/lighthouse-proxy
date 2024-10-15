@@ -69,10 +69,14 @@ const callLighthouse = async (
   }
   // Save a record that we started a lighthouse request for this url
   await Redis.fromEnv(ctx.env).set('lh:' + url, true, { px: 30 * 1000 })
-  const response = await fetch(
-    `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?key=${ctx.env.PAGESPEED_API_KEY}&category=performance&url=${url}`,
-  )
   try {
+    const response = await fetch(
+      `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?key=${ctx.env.PAGESPEED_API_KEY}&category=performance&url=${url}`,
+    )
+    if (!response.ok) {
+      console.warn('Failed to fetch Lighthouse score for url:', url)
+      return
+    }
     const data = await response.json()
     // Persist the result to Redis cache in the background
     console.log('Caching result for url: ', url)
