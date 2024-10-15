@@ -74,7 +74,7 @@ const callLighthouse = async (
       `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?key=${ctx.env.PAGESPEED_API_KEY}&category=performance&url=${url}`,
     )
     if (!response.ok) {
-      console.warn('Failed to fetch Lighthouse score for url:', url)
+      console.warn('Lighthouse score request was not successful for url:', url)
       return
     }
     const data = await response.json()
@@ -85,6 +85,7 @@ const callLighthouse = async (
     )
     return data
   } catch {
+    console.warn('Failed to fetch Lighthouse score for url:', url)
     return
   }
 }
