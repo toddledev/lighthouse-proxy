@@ -77,13 +77,54 @@ const callLighthouse = async (
       console.warn('Lighthouse score request was not successful for url:', url)
       return
     }
-    const data = await response.json()
+    const data = await response.json<{
+      lighthouseResult: {
+        categories: { performance: { score: number } }
+        audits: {
+          'first-contentful-paint': { score: number }
+          'speed-index': { score: number }
+          'largest-contentful-paint': { score: number }
+          'total-blocking-time': { score: number }
+          'cumulative-layout-shift': { score: number }
+        }
+      }
+    }>()
+    const trimmedData = {
+      lighthouseResult: {
+        categories: {
+          performance: {
+            score: data.lighthouseResult.categories.performance.score,
+          },
+        },
+        audits: {
+          'first-contentful-paint': {
+            score: data.lighthouseResult.audits['first-contentful-paint'].score,
+          },
+          'speed-index': {
+            score: data.lighthouseResult.audits['speed-index'].score,
+          },
+          'largest-contentful-paint': {
+            score:
+              data.lighthouseResult.audits['largest-contentful-paint'].score,
+          },
+          'total-blocking-time': {
+            score: data.lighthouseResult.audits['total-blocking-time'].score,
+          },
+          'cumulative-layout-shift': {
+            score:
+              data.lighthouseResult.audits['cumulative-layout-shift'].score,
+          },
+        },
+      },
+    }
     // Persist the result to Redis cache in the background
     console.log('Caching result for url: ', url)
     ctx.executionCtx.waitUntil(
-      Redis.fromEnv(ctx.env).set(url, data, { px: SERVE_STALE_INTERVAL }),
+      Redis.fromEnv(ctx.env).set(url, trimmedData, {
+        px: SERVE_STALE_INTERVAL,
+      }),
     )
-    return data
+    return trimmedData
   } catch {
     console.warn('Failed to fetch Lighthouse score for url:', url)
     return
